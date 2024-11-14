@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attention aux QR Codes !</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+    <!-- Header -->
+    <header class="bg-danger text-white text-center py-5">
+        <h1 class="display-4">Attention aux QR Codes !</h1>
+        <p class="lead">Les QR codes peuvent cacher des pièges. Restez vigilant.</p>
+    </header>
+
+    <!-- Compteur de scans -->
+    <section class="text-center py-5">
+        <h2 class="h3 mb-4">Nombre de scans effectués</h2>
+        <div id="scanCounter" class="display-1 fw-bold text-danger">&nbsp;</div>
+    </section>
+
+    <!-- Graphique des scans par heure -->
+    <section class="container py-5">
+        <h3 class="text-center mb-4">Scans par heure</h3>
+        <canvas id="hourlyChart"></canvas>
+    </section>
+
+    <!-- Informations client -->
+    <section class="container py-5">
+        <h3 class="text-center mb-4">Informations Client</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Date : <span id="clientDate"></span></li>
+            <li class="list-group-item">User-Agent : <span id="clientUserAgent"></span></li>
+            <li class="list-group-item">Adresse IP : <span id="clientIp"></span></li>
+            <li class="list-group-item">Proxy : <span id="clientProxy"></span></li>
+        </ul>
+    </section>
+
+    <!-- Description de la campagne -->
+    <section class="container py-5">
+        <div class="text-center mb-4">
+            <h2 class="h4">Pourquoi cette campagne ?</h2>
+            <p>Un QR code peut facilement rediriger vers un site frauduleux sans que l’utilisateur s’en rende compte. Cette campagne a pour objectif de vous sensibiliser à l’utilisation des QR codes, qui peuvent être facilement utilisés pour du phishing, pour vous piéger.</p>
+        </div>
+    </section>
+
+    <!-- Exemples de risques -->
+    <section class="container py-5 bg-white">
+        <h3 class="text-center mb-4">Exemples de risques</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Page de connexion : Peut inciter les utilisateurs à saisir leurs identifiants.</li>
+            <li class="list-group-item">Formulaire d'inscription : Collecte d'informations personnelles (nom, e-mail, téléphone).</li>
+            <li class="list-group-item">Offres "exclusives" : Demande des informations bancaires pour des offres fictives.</li>
+        </ul>
+    </section>
+
+    <!-- Conseils de sécurité -->
+    <section class="container py-5">
+        <h3 class="text-center mb-4">Conseils de sécurité pour scanner des QR codes</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Vérifiez l'URL avant de cliquer ou de remplir un formulaire.</li>
+            <li class="list-group-item">Scannez uniquement les QR codes provenant de sources fiables.</li>
+            <li class="list-group-item">Attention aux autocollants QR : S'ils sont placés sur d'autres surfaces, ils peuvent être suspects.</li>
+            <li class="list-group-item">Utilisez une application de sécurité pour scanner et vérifier les liens URL.</li>
+        </ul>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="text-center py-5 bg-danger text-white">
+        <h3 class="mb-3">En savoir plus sur la sécurité des QR codes et le quishing</h3>
+        <a href="https://zenetys.com/blog" class="btn btn-light btn-lg" target="_blank">Lire notre article</a>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        async function updateCounter() {
+            const response = await fetch('/count');
+            const data = await response.json();
+            document.getElementById("scanCounter").textContent = data.total;
+
+            const labels = Object.keys(data.hourlyData);
+            const counts = Object.values(data.hourlyData);
+            new Chart(document.getElementById("hourlyChart"), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Scans par heure',
+                        data: counts,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                }
+            });
+        }
+
+        async function loadClientHeaders() {
+            const response = await fetch('/headers');
+            const headers = await response.json();
+            document.getElementById("clientDate").textContent = headers.date;
+            document.getElementById("clientUserAgent").textContent = headers.userAgent;
+            document.getElementById("clientIp").textContent = headers.ip;
+            document.getElementById("clientProxy").textContent = headers.proxy;
+        }
+
+        async function incrementCounter() {
+            await fetch('/count', { method: 'POST' });
+            updateCounter();
+        }
+
+        incrementCounter();
+        loadClientHeaders();
+    </script>
+</body>
+</html>
