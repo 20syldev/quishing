@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attention aux QR Codes !</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
 </head>
-<body class="bg-light">
-
+<body>
     <!-- Header -->
     <header class="bg-danger text-white text-center py-5">
         <h1 class="display-4">Attention aux QR Codes !</h1>
@@ -46,7 +45,7 @@
     </section>
 
     <!-- Exemples de risques -->
-    <section class="container py-5 bg-white">
+    <section class="container py-5">
         <h3 class="text-center mb-4">Exemples de risques</h3>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">Page de connexion : Peut inciter les utilisateurs à saisir leurs identifiants.</li>
@@ -75,6 +74,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        const updateTheme = () => document.documentElement.setAttribute('data-bs-theme', 
+            window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+
         async function updateCounter() {
             const response = await fetch('/count');
             const data = await response.json();
@@ -111,6 +114,7 @@
             updateCounter();
         }
 
+        updateTheme();
         incrementCounter();
         loadClientHeaders();
     </script>
