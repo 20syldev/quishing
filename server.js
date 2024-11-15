@@ -13,15 +13,4 @@ app.get('/count', (req, res) => {
     res.json({ total: ++scanCount, hourlyData: hourlyScans });
 });
 
-// Route pour récupérer les headers du client
-app.get('/headers', (req, res) => {
-    res.json({
-        date: new Date().toISOString(),
-        userAgent: req.headers['user-agent'],
-        ip: req.ip,
-        proxy: req.headers['x-forwarded-for'] || 'Non détecté'
-    });
-});
-
-// Démarrer le serveur
 app.listen(3000, () => console.log('Server started on http://localhost:3000'));
