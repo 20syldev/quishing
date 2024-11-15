@@ -5,8 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attention aux QR Codes !</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+    <style>
+        /* Style pour la pop-up */
+        #popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            color: #000;
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        #popupContent {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        #popupContent h2 {
+            margin-bottom: 20px;
+        }
+
+        #popupContent ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #popupContent li {
+            margin: 10px 0;
+        }
+
+        #popupContent button {
+            margin-top: 20px;
+        }
+
+        /* Animation de la page d'arrière-plan */
+        body.modal-active {
+            overflow: hidden;
+        }
+
+        /* Style pour les coches */
+        .checkmark {
+            color: green;
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
+    <!-- Pop-up au chargement -->
+    <div id="popup">
+        <div id="popupContent">
+            <h2><strong>Site Vérifié et Sécurisé</strong></h2>
+            <p>Votre sécurité est notre priorité. Ce site a été testé et validé par plusieurs plateformes de sécurité.</p>
+            <ul>
+                <li><span class="checkmark">&#10003;</span> Rapide et sécurisé</li>
+                <li><span class="checkmark">&#10003;</span> Vérifié par des experts en sécurité</li>
+                <li><span class="checkmark">&#10003;</span> Conforme aux standards de confidentialité</li>
+            </ul>
+            <button class="btn btn-success" id="continueBtn">Continuer</button>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="bg-danger text-white text-center py-5">
         <h1 class="display-4">Attention aux QR Codes !</h1>
@@ -25,17 +95,6 @@
         <canvas id="hourlyChart"></canvas>
     </section>
 
-    <!-- Informations client -->
-    <section class="container py-5">
-        <h3 class="text-center mb-4">Informations Client</h3>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Date : <span id="clientDate"></span></li>
-            <li class="list-group-item">User-Agent : <span id="clientUserAgent"></span></li>
-            <li class="list-group-item">Adresse IP : <span id="clientIp"></span></li>
-            <li class="list-group-item">Proxy : <span id="clientProxy"></span></li>
-        </ul>
-    </section>
-
     <!-- Description de la campagne -->
     <section class="container py-5">
         <div class="text-center mb-4">
@@ -47,11 +106,17 @@
     <!-- Exemples de risques -->
     <section class="container py-5">
         <h3 class="text-center mb-4">Exemples de risques</h3>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Page de connexion : Peut inciter les utilisateurs à saisir leurs identifiants.</li>
-            <li class="list-group-item">Formulaire d'inscription : Collecte d'informations personnelles (nom, e-mail, téléphone).</li>
-            <li class="list-group-item">Offres "exclusives" : Demande des informations bancaires pour des offres fictives.</li>
-        </ul>
+        <div class="row">
+            <div class="col-md-4 text-box">
+                <p>Page de connexion : Peut inciter les utilisateurs à saisir leurs identifiants.</p>
+            </div>
+            <div class="col-md-4 text-box">
+                <p>Formulaire d'inscription : Collecte d'informations personnelles (nom, e-mail, téléphone).</p>
+            </div>
+            <div class="col-md-4 text-box">
+                <p>Offres "exclusives" : Demande des informations bancaires pour des offres fictives.</p>
+            </div>
+        </div>
     </section>
 
     <!-- Conseils de sécurité -->
@@ -100,22 +165,13 @@
             });
         }
 
-        async function loadClientHeaders() {
-            const response = await fetch('/headers');
-            const headers = await response.json();
-            document.getElementById("clientDate").textContent = headers.date;
-            document.getElementById("clientUserAgent").textContent = headers.userAgent;
-            document.getElementById("clientIp").textContent = headers.ip;
-            document.getElementById("clientProxy").textContent = headers.proxy;
-        }
-
-        async function incrementCounter() {
-            await fetch('/count', { method: 'POST' });
+        document.getElementById("continueBtn").addEventListener("click", () => {
+            document.getElementById("popup").style.display = "none";
+            document.body.classList.remove("modal-active");
             updateCounter();
-        }
+        });
 
         updateTheme();
-        incrementCounter();
         loadClientHeaders();
     </script>
 </body>
